@@ -49,79 +49,107 @@ Hemavathy.S
 ```
 import torch
 import torch.nn as nn
+import numpy as np
 import matplotlib.pyplot as plt
+%matplotlib inline
+
+X = torch.linspace(1,70,70).reshape(-1,1)
+
 torch.manual_seed(71)
-x = torch.linspace(1, 50, 50).reshape(-1, 1)
-e = torch.randint(-8, 9, (50, 1), dtype=torch.float)
-y = 2 * x + 1 + e
-plt.scatter(x, y, color='red')
+e = torch.randint(-8,9,(70,1),dtype=torch.float)
+
+y = 2*X + 1 + e
+print(y.shape)
+
+plt.scatter(X.numpy(), y.numpy(),color='red')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.title('Generated Data for Linear Regression')
 plt.show()
+
+
+torch.manual_seed(59)
+
+
 class Model(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
         self.linear = nn.Linear(in_features, out_features)
+
     def forward(self, x):
-        return self.linear(x)
+        y_pred = self.linear(x)
+        return y_pred
+
+
 torch.manual_seed(59)
 model = Model(1, 1)
-initial_weight = model.linear.weight.item()
-initial_bias = model.linear.bias.item()
-print("\nName: Hemavathy.S")
-print("Register No: 212223230076")
-print(f'Initial Weight: {initial_weight:.8f}, Initial Bias: {initial_bias:.8f}\n')
+print('Weight:', model.linear.weight.item())
+print('Bias:  ', model.linear.bias.item())
+
 loss_function = nn.MSELoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.001)
-epochs = 100
+
+optimizer = torch.optim.SGD(model.parameters(), lr=0.0001)
+
+epochs = 50
 losses = []
+
 for epoch in range(1, epochs + 1):
     optimizer.zero_grad()
-    y_pred = model(x)
+    y_pred = model(X)
     loss = loss_function(y_pred, y)
     losses.append(loss.item())
+
     loss.backward()
     optimizer.step()
-    print(f'epoch: {epoch:2} loss: {loss.item():10.8f}'
-          f'weight: {model.linear.weight.item():10.8f}'
+
+
+    print(f'epoch: {epoch:2}  loss: {loss.item():10.8f}  '
+          f'weight: {model.linear.weight.item():10.8f}  '
           f'bias: {model.linear.bias.item():10.8f}')
-plt.plot(range(epochs), losses, color='blue')
+
+plt.plot(range(epochs), losses)
 plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.title('Loss Curve')
+plt.xlabel('epoch');
 plt.show()
-x1 = torch.tensor([x.min().item(), x.max().item()])
-y1 = x1 * model.linear.weight.item() + model.linear.bias.item()
-plt.scatter(x, y, label="Original Data")
-plt.plot(x1, y1, 'r', label="Best-Fit Line")
+
+x1 = torch.tensor([X.min().item(), X.max().item()])
+
+w1, b1 = model.linear.weight.item(), model.linear.bias.item()
+
+y1 = x1 * w1 + b1
+
+print(f'Final Weight: {w1:.8f}, Final Bias: {b1:.8f}')
+print(f'X range: {x1.numpy()}')
+print(f'Predicted Y values: {y1.numpy()}')
+
+plt.scatter(X.numpy(), y.numpy(), label="Original Data")
+plt.plot(x1.numpy(), y1.numpy(), 'r', label="Best-Fit Line")
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title('Trained Model: Best-fit Line')
+plt.title('Trained Model: Best-Fit Line')
 plt.legend()
 plt.show()
-x_new = torch.tensor([[120.0]])
-y_new_pred = model(x_new).item()
-print("\nName: Hemavathy.S")
-print("Register No : 212223230076")
-print(f"\nprediction for x = 120: {y_new_pred:.8f}")
+
+
 ```
 
 ### Dataset Information
 
-<img width="958" height="613" alt="image" src="https://github.com/user-attachments/assets/8cb86743-b45b-48f6-bcb3-cfdbe2ff9139" />
+<img width="813" height="567" alt="image" src="https://github.com/user-attachments/assets/941b5160-12c5-4361-aec3-1bdda62ad406" />
 
 ### OUTPUT
 
 ### Training Loss Vs Iteration Plot
-<img width="886" height="617" alt="image" src="https://github.com/user-attachments/assets/b1dd8829-a5e7-49d1-a963-d5e0cce23dab" />
+<img width="863" height="534" alt="image" src="https://github.com/user-attachments/assets/47067d88-05be-4f4f-89c3-8bf08465354c" />
+
 
 ### Best Fit line plot
-<img width="849" height="642" alt="image" src="https://github.com/user-attachments/assets/eb747a06-f664-42f8-80ef-c524f71ff517" />
+<img width="769" height="583" alt="image" src="https://github.com/user-attachments/assets/7fe1f9bd-2531-4cb1-8461-e2da8597deee" />
 
 
 ### New Sample Data Prediction
-<img width="513" height="127" alt="image" src="https://github.com/user-attachments/assets/6e54dcba-2308-4509-bded-c36acdda2069" />
+<img width="573" height="103" alt="image" src="https://github.com/user-attachments/assets/27705c46-cf09-4543-b087-30bc4fa0dded" />
+
 
 
 ## RESULT
